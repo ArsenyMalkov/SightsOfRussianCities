@@ -36,7 +36,7 @@ public class MapFragment extends Fragment {
                                         googleApiClient);
                                 if (lastLocation != null) {
 //                                mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-//                                mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+//                                mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));ds
                                 }
                                 return;
                             }
