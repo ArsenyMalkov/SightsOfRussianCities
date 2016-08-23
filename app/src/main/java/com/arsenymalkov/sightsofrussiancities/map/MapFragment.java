@@ -120,7 +120,9 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
             googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
                 public boolean onMyLocationButtonClick() {
-                    fetchSights();
+                    if (lastLocation != null) {
+                        fetchSights();
+                    }
                     return false;
                 }
             });
@@ -224,6 +226,7 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
 
                         googleMap.addMarker(new MarkerOptions()
                                 .position(sightPosition)
+                                // TODO "&quot;" in text
                                 .title(sight.getName())
                         );
                     }
