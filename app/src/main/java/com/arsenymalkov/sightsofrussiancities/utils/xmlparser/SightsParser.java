@@ -1,6 +1,6 @@
 package com.arsenymalkov.sightsofrussiancities.utils.xmlparser;
 
-import com.arsenymalkov.sightsofrussiancities.Sight;
+import com.arsenymalkov.sightsofrussiancities.map.Sight;
 
 import java.util.List;
 

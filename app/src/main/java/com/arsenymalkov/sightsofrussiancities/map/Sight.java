@@ -1,4 +1,4 @@
-package com.arsenymalkov.sightsofrussiancities;
+package com.arsenymalkov.sightsofrussiancities.map;
 
 import android.support.annotation.NonNull;
 

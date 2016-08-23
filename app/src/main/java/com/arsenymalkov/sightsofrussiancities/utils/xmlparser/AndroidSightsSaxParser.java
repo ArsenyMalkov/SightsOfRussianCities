@@ -6,7 +6,7 @@ import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.util.Xml;
 
-import com.arsenymalkov.sightsofrussiancities.Sight;
+import com.arsenymalkov.sightsofrussiancities.map.Sight;
 
 import java.util.ArrayList;
 import java.util.List;
