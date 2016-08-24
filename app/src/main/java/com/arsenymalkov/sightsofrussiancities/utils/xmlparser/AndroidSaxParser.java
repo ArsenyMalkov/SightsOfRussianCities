@@ -1,5 +1,6 @@
 package com.arsenymalkov.sightsofrussiancities.utils.xmlparser;
 
+import android.graphics.Region;
 import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
@@ -11,13 +12,13 @@ import com.arsenymalkov.sightsofrussiancities.map.Sight;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AndroidSightsSaxParser extends BaseSightsParser {
+public class AndroidSaxParser extends BaseParser {
 
-    public AndroidSightsSaxParser(String sightUrl) {
-        super(sightUrl);
+    public AndroidSaxParser(String url) {
+        super(url);
     }
 
-    public List<Sight> parse() {
+    public List<Sight> parseSights() {
         final Sight currentSight = new Sight();
         RootElement root = new RootElement(ROOT_ELEMENT);
         final List<Sight> sights = new ArrayList<>();
@@ -61,6 +62,11 @@ public class AndroidSightsSaxParser extends BaseSightsParser {
         }
 
         return sights;
+    }
+
+    @Override
+    public List<Region> parseRegions() {
+        return null;
     }
 
 }

@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-public abstract class BaseSightsParser implements SightsParser {
+public abstract class BaseParser implements Parser {
 
     static final String ROOT_ELEMENT = "response";
     static final String ITEMS = "items";
@@ -20,18 +20,18 @@ public abstract class BaseSightsParser implements SightsParser {
     static final String GEO = "geo";
 
 
-    InputStream sightsIS;
+    InputStream inputStream;
 
-    protected BaseSightsParser(String sightsXml){
+    protected BaseParser(String xml){
         try {
-            this.sightsIS = new ByteArrayInputStream(sightsXml.getBytes("UTF-8"));
+            this.inputStream = new ByteArrayInputStream(xml.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     protected InputStream getInputStream() {
-        return sightsIS;
+        return inputStream;
     }
 
 }

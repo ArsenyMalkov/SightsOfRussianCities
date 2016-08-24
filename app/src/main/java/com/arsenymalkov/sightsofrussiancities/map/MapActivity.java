@@ -25,13 +25,10 @@ public class MapActivity extends AppCompatActivity {
             mapFragment.setSearchCity(searchCity);
         }
 
-//        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
-
         if (savedInstanceState == null) {
             getFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_map, mapFragment)
+                    .replace(R.id.fragment_container, mapFragment)
                     .commit();
         }
     }

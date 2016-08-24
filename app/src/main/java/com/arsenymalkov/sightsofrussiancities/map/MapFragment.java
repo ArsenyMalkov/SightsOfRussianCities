@@ -14,7 +14,7 @@ import android.util.Log;
 
 import com.arsenymalkov.sightsofrussiancities.R;
 import com.arsenymalkov.sightsofrussiancities.network.RestClient;
-import com.arsenymalkov.sightsofrussiancities.utils.xmlparser.AndroidSightsSaxParser;
+import com.arsenymalkov.sightsofrussiancities.utils.xmlparser.AndroidSaxParser;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -213,8 +213,8 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
                 );
 
                 try {
-                    AndroidSightsSaxParser androidSightsSaxParser = new AndroidSightsSaxParser(responseBody.string());
-                    List<Sight> sightList = androidSightsSaxParser.parse();
+                    AndroidSaxParser androidSightsSaxParser = new AndroidSaxParser(responseBody.string());
+                    List<Sight> sightList = androidSightsSaxParser.parseSights();
 
                     for (Sight sight : sightList) {
 //                        if (sight == currentSight) {

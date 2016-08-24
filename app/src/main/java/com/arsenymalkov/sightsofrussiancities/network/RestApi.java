@@ -14,4 +14,12 @@ public interface RestApi {
     @POST("/")
     Observable<ResponseBody> getSights(@FieldMap HashMap<String, String> params);
 
+    @FormUrlEncoded
+    @POST("/")
+    Observable<ResponseBody> getCities(@FieldMap HashMap<String, String> params);
+
+    @FormUrlEncoded
+    @POST("/")
+    Observable<ResponseBody> getRegions(@FieldMap HashMap<String, String> params);
+
 }
