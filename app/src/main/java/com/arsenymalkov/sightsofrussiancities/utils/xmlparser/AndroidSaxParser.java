@@ -1,12 +1,12 @@
 package com.arsenymalkov.sightsofrussiancities.utils.xmlparser;
 
-import android.graphics.Region;
 import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
 import android.util.Xml;
 
+import com.arsenymalkov.sightsofrussiancities.main.Region;
 import com.arsenymalkov.sightsofrussiancities.map.Sight;
 
 import java.util.ArrayList;
@@ -21,14 +21,15 @@ public class AndroidSaxParser extends BaseParser {
     public List<Sight> parseSights() {
         final Sight currentSight = new Sight();
         RootElement root = new RootElement(ROOT_ELEMENT);
-        final List<Sight> sights = new ArrayList<>();
+        final List<Sight> sightList = new ArrayList<>();
         Element items = root.getChild(ITEMS);
         Element item = items.getChild(ITEM);
 
+//        item.setStartElementListener();
         item.setEndElementListener(new EndElementListener() {
             @Override
             public void end() {
-                sights.add(currentSight.copy());
+                sightList.add(currentSight.copy());
             }
         });
         Element name = item.getChild(NAME);
@@ -61,12 +62,38 @@ public class AndroidSaxParser extends BaseParser {
             throw new RuntimeException(e);
         }
 
-        return sights;
+        return sightList;
     }
 
     @Override
     public List<Region> parseRegions() {
-        return null;
+        final Region currentRegion = new Region();
+        RootElement root = new RootElement(ROOT_ELEMENT);
+        final List<Region> regionList = new ArrayList<>();
+        Element items = root.getChild(ITEMS);
+        Element item = items.getChild(ITEM);
+
+        item.setEndElementListener(new EndElementListener() {
+            @Override
+            public void end() {
+                regionList.add(currentRegion.copy());
+            }
+        });
+        Element name = item.getChild(NAME);
+        name.getChild(TEXT).setEndTextElementListener(new EndTextElementListener() {
+            @Override
+            public void end(String s) {
+                currentRegion.setName(s);
+            }
+        });
+
+        try {
+            Xml.parse(this.getInputStream(), Xml.Encoding.UTF_8, root.getContentHandler());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return regionList;
     }
 
 }

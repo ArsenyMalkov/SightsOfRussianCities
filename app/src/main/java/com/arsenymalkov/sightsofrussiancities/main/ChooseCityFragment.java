@@ -4,7 +4,6 @@ package com.arsenymalkov.sightsofrussiancities.main;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +12,12 @@ import android.widget.ListView;
 
 import com.arsenymalkov.sightsofrussiancities.R;
 import com.arsenymalkov.sightsofrussiancities.network.RestClient;
+import com.arsenymalkov.sightsofrussiancities.utils.xmlparser.AndroidSaxParser;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Response;
@@ -29,6 +31,9 @@ public class ChooseCityFragment extends Fragment {
     private String[] names = { "Иван", "Марья", "Петр", "Антон", "Даша", "Борис",
             "Костя", "Игорь", "Анна", "Денис", "Андрей" };
 
+    ArrayAdapter<String> adapter;
+    ListView listView;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,12 +46,11 @@ public class ChooseCityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_choose_city, container, false);
 
-        ListView listView = (ListView) view.findViewById(R.id.list_view);
+        listView = (ListView) view.findViewById(R.id.list_view);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_list_item_1, names);
+//        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, names);
 
-        listView.setAdapter(adapter);
+//        listView.setAdapter(adapter);
 
         return view;
     }
@@ -102,7 +106,15 @@ public class ChooseCityFragment extends Fragment {
             @Override
             public void onNext(ResponseBody responseBody) {
                 try {
-                    Log.d("TEST", responseBody.string());
+                    AndroidSaxParser androidSaxParser = new AndroidSaxParser(responseBody.string());
+                    List<Region> regionList = androidSaxParser.parseRegions();
+
+                    List<String> stringList = new ArrayList<>();
+                    for (Region region : regionList) {
+                        stringList.add(region.getName());
+                    }
+                    adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, stringList);
+                    listView.setAdapter(adapter);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
