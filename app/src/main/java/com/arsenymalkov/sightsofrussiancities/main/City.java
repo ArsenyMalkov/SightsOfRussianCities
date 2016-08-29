@@ -2,7 +2,7 @@ package com.arsenymalkov.sightsofrussiancities.main;
 
 import android.support.annotation.NonNull;
 
-public class Region implements Comparable<Region> {
+public class City implements Comparable<City> {
 
     private String id;
 
@@ -25,12 +25,12 @@ public class Region implements Comparable<Region> {
     }
 
     @Override
-    public int compareTo(@NonNull Region region) {
+    public int compareTo(@NonNull City city) {
         return 0;
     }
 
-    public Region copy() {
-        Region copy = new Region();
+    public City copy() {
+        City copy = new City();
         copy.id = id;
         copy.name = name;
         return copy;

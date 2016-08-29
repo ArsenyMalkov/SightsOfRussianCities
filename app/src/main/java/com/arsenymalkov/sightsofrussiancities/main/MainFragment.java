@@ -27,7 +27,7 @@ public class MainFragment extends Fragment {
             public void onClick(View view) {
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.fragment_container, new ChooseCityFragment())
+                        .replace(R.id.fragment_container, new ChooseRegionFragment())
                         .commit();
             }
         });

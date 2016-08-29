@@ -4,10 +4,15 @@ import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 import android.sax.RootElement;
+import android.sax.StartElementListener;
+import android.sax.TextElementListener;
 import android.util.Xml;
 
+import com.arsenymalkov.sightsofrussiancities.main.City;
 import com.arsenymalkov.sightsofrussiancities.main.Region;
 import com.arsenymalkov.sightsofrussiancities.map.Sight;
+
+import org.xml.sax.Attributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +30,6 @@ public class AndroidSaxParser extends BaseParser {
         Element items = root.getChild(ITEMS);
         Element item = items.getChild(ITEM);
 
-//        item.setStartElementListener();
         item.setEndElementListener(new EndElementListener() {
             @Override
             public void end() {
@@ -65,6 +69,7 @@ public class AndroidSaxParser extends BaseParser {
         return sightList;
     }
 
+
     @Override
     public List<Region> parseRegions() {
         final Region currentRegion = new Region();
@@ -73,17 +78,30 @@ public class AndroidSaxParser extends BaseParser {
         Element items = root.getChild(ITEMS);
         Element item = items.getChild(ITEM);
 
-        item.setEndElementListener(new EndElementListener() {
+        item.setStartElementListener(new StartElementListener() {
             @Override
-            public void end() {
+            public void start(Attributes attributes) {
                 regionList.add(currentRegion.copy());
+                currentRegion.setId(attributes.getValue("id"));
             }
         });
         Element name = item.getChild(NAME);
-        name.getChild(TEXT).setEndTextElementListener(new EndTextElementListener() {
+        name.getChild(TEXT).setTextElementListener(new TextElementListener() {
+            private boolean rus = false;
+
             @Override
             public void end(String s) {
-                currentRegion.setName(s);
+                if (rus) {
+                    currentRegion.setName(s);
+                    rus = false;
+                }
+            }
+
+            @Override
+            public void start(Attributes attributes) {
+                if (attributes.getValue("lang").equals("rus")) {
+                    rus = true;
+                }
             }
         });
 
@@ -94,6 +112,50 @@ public class AndroidSaxParser extends BaseParser {
         }
 
         return regionList;
+    }
+
+    @Override
+    public List<City> parseCities() {
+        final City currentCity = new City();
+        RootElement root = new RootElement(ROOT_ELEMENT);
+        final List<City> cityList = new ArrayList<>();
+        Element items = root.getChild(ITEMS);
+        Element item = items.getChild(ITEM);
+
+        item.setStartElementListener(new StartElementListener() {
+            @Override
+            public void start(Attributes attributes) {
+                cityList.add(currentCity.copy());
+                currentCity.setId(attributes.getValue("id"));
+            }
+        });
+        Element name = item.getChild(NAME);
+        name.getChild(TEXT).setTextElementListener(new TextElementListener() {
+            private boolean rus = false;
+
+            @Override
+            public void end(String s) {
+                if (rus) {
+                    currentCity.setName(s);
+                    rus = false;
+                }
+            }
+
+            @Override
+            public void start(Attributes attributes) {
+                if (attributes.getValue("lang").equals("rus")) {
+                    rus = true;
+                }
+            }
+        });
+
+        try {
+            Xml.parse(this.getInputStream(), Xml.Encoding.UTF_8, root.getContentHandler());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return cityList;
     }
 
 }

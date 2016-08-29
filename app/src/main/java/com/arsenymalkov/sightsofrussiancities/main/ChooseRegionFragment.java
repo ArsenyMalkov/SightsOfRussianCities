@@ -28,12 +28,10 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ChooseCityFragment extends Fragment {
+public class ChooseRegionFragment extends Fragment {
 
     private ArrayAdapter<String> adapter;
     private ListView listView;
-
-    private Region currentRegion;
 
     private Subscription subscription;
 
@@ -41,30 +39,30 @@ public class ChooseCityFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        fetchCities();
+        fetchRegions();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_choose_city, container, false);
+        View view = inflater.inflate(R.layout.fragment_choose_region, container, false);
 
         listView = (ListView) view.findViewById(R.id.list_view);
+
+//        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, names);
+
+//        listView.setAdapter(adapter);
 
         return view;
     }
 
-    public void setCurrentRegion(Region currentRegion) {
-        this.currentRegion = currentRegion;
-    }
-
-    public void fetchCities() {
+    public void fetchRegions() {
         HashMap<String, String> params = new HashMap<>();
         params.put("russia_travel_hash", "tohlUaNuaa7a9aa70a48c411f8e7ea9171d5c785");
         params.put("russia_travel_passwd", "greentoll");
         params.put("russia_travel_login", "madnessw");
         params.put("xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                + "<request action=\"get-library\" type=\"addressLocality\" page=\"1\" region=\"" + currentRegion.getId() + "\" />");
+                + "request action=\"get-library\" type=\"addressRegion\" />");
 
         final rx.Observable<ResponseBody> call = RestClient.getRestApi().getRegions(params);
         subscription = call.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<ResponseBody>() {
@@ -110,18 +108,23 @@ public class ChooseCityFragment extends Fragment {
             public void onNext(ResponseBody responseBody) {
                 try {
                     AndroidSaxParser androidSaxParser = new AndroidSaxParser(responseBody.string());
-                    List<City> cityList = androidSaxParser.parseCities();
+                    final List<Region> regionList = androidSaxParser.parseRegions();
 
-                    List<String> stringList = new ArrayList<>();
-                    for (City city : cityList) {
-                        stringList.add(city.getName());
+                    final List<String> stringList = new ArrayList<>();
+                    for (Region region : regionList) {
+                        stringList.add(region.getName());
                     }
                     adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, stringList);
                     listView.setAdapter(adapter);
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                            
+                            ChooseCityFragment chooseCityFragment = new ChooseCityFragment();
+                            chooseCityFragment.setCurrentRegion(regionList.get(i));
+                            getActivity().getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.fragment_container, chooseCityFragment)
+                                    .commit();
                         }
                     });
                 } catch (IOException e) {
