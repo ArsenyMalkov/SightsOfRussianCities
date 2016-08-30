@@ -148,9 +148,9 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
 
     public void fetchSights() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("russia_travel_hash", "tohlUaNuaa7a9aa70a48c411f8e7ea9171d5c785");
-        params.put("russia_travel_passwd", "greentoll");
-        params.put("russia_travel_login", "madnessw");
+        params.put("russia_travel_hash", getString(R.string.russia_travel_hash));
+        params.put("russia_travel_passwd", getString(R.string.russia_travel_passwd));
+        params.put("russia_travel_login", getString(R.string.russia_travel_login));
         params.put("xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                 "<request action=\"get-objects-for-update\" >" +
                 "<point radius=\"1\">"+lastLocation.getLatitude()+","+lastLocation.getLongitude()+"</point>" +//52.276941,104.282650
@@ -239,6 +239,10 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
                 }
             }
         });
+    }
+
+    public void fetchSightsCity() {
+
     }
 
     public Pair<Double, Double> getCoordinates(String geo) {
