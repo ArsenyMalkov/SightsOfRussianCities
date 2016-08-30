@@ -44,7 +44,7 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
 
     private List<Sight> sightList;
 
-    boolean searchCity;
+    private String selectedCity;
 
     private Context context;
 
@@ -69,10 +69,13 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
                                 if (lastLocation != null && googleMap != null) {
                                     Log.d("TEST", "long:"+lastLocation.getLongitude()+"lat:"+lastLocation.getLatitude());
                                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), 13));
-                                    fetchSights();
+                                    fetchSightsCity();
                                 } else {
                                     Log.d("TEST", "last loc null");
                                 }
+                            }
+                            if (selectedCity != null) {
+                                fetchSights();
                             }
                         }
 
@@ -108,8 +111,8 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
         super.onStop();
     }
 
-    public void setSearchCity(boolean searchCity) {
-        this.searchCity = searchCity;
+    public void setSelectedCity(String selectedCity) {
+        this.selectedCity = selectedCity;
     }
 
     @Override
@@ -120,7 +123,7 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
             googleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override
                 public boolean onMyLocationButtonClick() {
-                    if (lastLocation != null) {
+                    if (lastLocation != null && selectedCity == null) {
                         fetchSights();
                     }
                     return false;

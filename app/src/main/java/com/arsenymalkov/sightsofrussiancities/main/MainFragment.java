@@ -37,7 +37,6 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), MapActivity.class);
-                intent.putExtra("search_city", false);
                 startActivity(intent);
             }
         });

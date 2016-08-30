@@ -1,6 +1,7 @@
 package com.arsenymalkov.sightsofrussiancities.main;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.arsenymalkov.sightsofrussiancities.R;
+import com.arsenymalkov.sightsofrussiancities.map.MapActivity;
 import com.arsenymalkov.sightsofrussiancities.network.RestClient;
 import com.arsenymalkov.sightsofrussiancities.utils.xmlparser.AndroidSaxParser;
 
@@ -110,7 +112,7 @@ public class ChooseCityFragment extends Fragment {
             public void onNext(ResponseBody responseBody) {
                 try {
                     AndroidSaxParser androidSaxParser = new AndroidSaxParser(responseBody.string());
-                    List<City> cityList = androidSaxParser.parseCities();
+                    final List<City> cityList = androidSaxParser.parseCities();
 
                     List<String> stringList = new ArrayList<>();
                     for (City city : cityList) {
@@ -121,7 +123,9 @@ public class ChooseCityFragment extends Fragment {
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                            
+                            Intent intent = new Intent(getContext(), MapActivity.class);
+                            intent.putExtra(MapActivity.SELECTED_CITY, cityList.get(i).getId());
+                            startActivity(intent);
                         }
                     });
                 } catch (IOException e) {

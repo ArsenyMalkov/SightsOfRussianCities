@@ -7,7 +7,7 @@ import com.arsenymalkov.sightsofrussiancities.R;
 
 public class MapActivity extends AppCompatActivity {
 
-    public static final String SEARCH_CITY = "SEARCH_CITY";
+    public static final String SELECTED_CITY = "city";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +21,8 @@ public class MapActivity extends AppCompatActivity {
 
         MapFragment mapFragment = new MapFragment();
         if (getIntent() != null) {
-            boolean searchCity = getIntent().getBooleanExtra(SEARCH_CITY, true);
-            mapFragment.setSearchCity(searchCity);
+            String selectedCity = getIntent().getStringExtra(SELECTED_CITY);
+            mapFragment.setSelectedCity(selectedCity);
         }
 
         if (savedInstanceState == null) {
