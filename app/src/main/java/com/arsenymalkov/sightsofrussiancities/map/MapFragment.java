@@ -75,7 +75,7 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
                                 }
                             }
                             if (selectedCity != null) {
-                                fetchSights();
+                                fetchSightsCity();
                             }
                         }
 
@@ -242,7 +242,98 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
     }
 
     public void fetchSightsCity() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("russia_travel_hash", getString(R.string.russia_travel_hash));
+        params.put("russia_travel_passwd", getString(R.string.russia_travel_passwd));
+        params.put("russia_travel_login", getString(R.string.russia_travel_login));
+        params.put("xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<request action=\"get-objects-for-update\" >" +
+                "<addressLocality><id>"+selectedCity+"</id></addressLocality>" +//52.276941,104.282650
+                "<attributes>" +
+                "<name/>" +
+                "<url/>" +
+                "<photos/>" +
+                "<streetAddress/>" +
+                "<openingHours/>" +
+                "<telephone/>" +
+                "</attributes>" +
+                "</request>");
 
+        final rx.Observable<ResponseBody> call = RestClient.getRestApi().getSights(params);
+        call.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<ResponseBody>() {
+            @Override
+            public void onCompleted() {
+//                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+//                progressBar.setVisibility(View.GONE);
+
+                // Non-2XX http error happened
+                if (e instanceof HttpException) {
+                    HttpException httpException = (HttpException) e;
+                    Response response = httpException.response();
+
+                    switch (response.code()) {
+                        // Hotel not found
+                        case 404:
+//                            SessionManager sessionManager = new SessionManager(getContext());
+//                            sessionManager.logOut();
+                            break;
+                    }
+//                    response.errorBody();
+                }
+
+                // A network error happened
+                if (e instanceof IOException) {
+//                    Toast.makeText(getContext(), R.string.error_network_check_internet, Toast.LENGTH_LONG).show();
+
+//                    getActivity().getSupportFragmentManager()
+//                            .beginTransaction()
+//                            .replace(R.id.fragment_container, new ConnectionErrorFragment())
+//                            .addToBackStack(null)
+//                            .commit();
+                }
+
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onNext(ResponseBody responseBody) {
+                googleMap.clear();
+
+//                LatLng myCoordinates = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+//                googleMap.addCircle(new CircleOptions()
+//                        .strokeColor(ContextCompat.getColor(context, R.color.colorAccent))
+//                        .center(myCoordinates)
+//                        .radius(1000) // meters
+//                );
+
+                try {
+                    AndroidSaxParser androidSightsSaxParser = new AndroidSaxParser(responseBody.string());
+                    List<Sight> sightList = androidSightsSaxParser.parseSights();
+
+                    for (Sight sight : sightList) {
+//                        if (sight == currentSight) {
+//                            continue;
+//                        }
+
+                        Pair<Double, Double> coordinates = getCoordinates(sight.getGeo());
+                        LatLng sightPosition = new LatLng(coordinates.first, coordinates.second);
+
+                        googleMap.addMarker(new MarkerOptions()
+                                .position(sightPosition)
+                                // TODO "&quot;" in text
+                                .title(sight.getName())
+                        );
+                    }
+//                    adapter.swap(sightsList);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public Pair<Double, Double> getCoordinates(String geo) {
